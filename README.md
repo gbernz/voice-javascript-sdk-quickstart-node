@@ -2,15 +2,14 @@
   <img src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg" alt="Twilio" width="250" />
 </a>
 
-# Twilio Voice JavaScript SDK Quickstart for Node.js
+# twilio-serverless-voice-javascript-sdk-quickstart-node-queue
+
 
 ![](https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-node/workflows/Node.js/badge.svg)
 
-> This template is part of Twilio CodeExchange. If you encounter any issues with this code, please open an issue at [github.com/twilio-labs/code-exchange/issues](https://github.com/twilio-labs/code-exchange/issues).
-
 ## About
 
-This application should give you a ready-made starting point for writing your own voice apps with Twilio Voice JavaScript SDK 2.0 (Formerly known as Twilio Client). 
+This application should give you a ready-made starting point for writing your own voice apps with Twilio Voice JavaScript SDK 2.0 (Formerly known as Twilio Client). Quickly setup a Twilio Client and manage inbound/outbound calls from your browser. This follows https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-node with the added bonus of a queue.
 
 This application is built in Node.
 
