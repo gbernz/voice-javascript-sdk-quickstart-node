@@ -16,13 +16,17 @@ This application should give you a ready-made starting point for writing your ow
 - [ngrok](https://ngrok.com/download) - this is used to expose your local development server to the internet. For more information, read [this Twilio blog post](https://www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html).
 - A WebRTC enabled browser (Google Chrome or Mozilla Firefox are recommended). Edge and Internet Explorer will not work for testing.
 
-### Create a TwiML Application, Purchase a Phone Number, Create an API Key
+### Create a TwiML Application, TwiML Bin, Purchase Twilio Phone Numbers, Create an API Key
 
 1. [Create a TwiML Application in the Twilio Console](https://www.twilio.com/console/voice/twiml/apps). Once you create the TwiML Application, click on it in your list of TwiML Apps to find the TwiML App SID. You will need this SID for your `.env` file. **Note:** You will need to configure the Voice "REQUEST URL" in your TwiML App later.
 
    - For detailed instructions with screenshots, see the [Create a TwiML App.md file](ConsoleHowTos/CreateNewTwiMLApp/CreateNewTwiMLApp.md)
+
+2. [Create a TwiML Bin in the Twilio Console](https://www.twilio.com/console/twiml-bins). Once you create the TwiML Bin, save the URL. You will need this URL for your 2nd Twilio Phone Number to handle incoming calls.
+
+   ![screenshot of TwiML Bin Voice Configuration](./screenshots/DequeueWithATwimlBin.png)
  
-2. [Purchase (2) Voice phone numbers](https://www.twilio.com/console/phone-numbers/incoming). You will need this phone number in [E.164 format](https://en.wikipedia.org/wiki/E.164) for your `.env` file. The first number is the main touchpoint for your business, this is used to establish the queue for inbound calls. The second number is what is used by your business to dequeue callers out of the queue.
+3. [Purchase (2) Voice phone numbers](https://www.twilio.com/console/phone-numbers/incoming). You will need this phone number in [E.164 format](https://en.wikipedia.org/wiki/E.164) for your `.env` file. The first number is the main touchpoint for your business, this is used to establish the queue for inbound calls. The second number is what is used by your business to dequeue callers out of the queue.
    
    - For detailed instructions with screenshots, see the [Buy a Phone Number.md file](ConsoleHowTos/BuyVoicePhoneNumber/BuyVoicePhoneNumber.md)
    
@@ -122,17 +126,29 @@ Enter one client's name in the other client's 'Make a Call' input and press the 
 
 ### Receiving Incoming Calls from a Non-Browser Device
 
-You will first need to configure your Twilio Voice Phone Number to use the TwiML App we created earlier. This tells Twilio how to handle an incoming call directed to your Twilio Voice Number.
+You will first need to configure your 1st Twilio Voice Phone Number to use the TwiML App we created earlier. This tells Twilio how to handle an incoming call directed to your 1st Twilio Voice Number (main business number).
 
 1.  Log in to your [Twilio Console](https://www.twilio.com/console)
 2.  Navigate to your [Active Numbers list](https://www.twilio.com/console/phone-numbers/incoming)
-3.  Click on the number you purchased earlier
+3.  Click on the 1st Twilio number you purchased earlier
 4.  Scroll down to find the 'Voice & Fax' section and look for 'CONFIGURE WITH'
 5.  Select 'TwiML' App
 6.  Under 'TWIML APP', choose the TwiML App you created earlier.
 7.  Click the 'Save' button at the bottom of the browser window.
 
-![screenshot of phone number configuration](./screenshots/ConfigurePhoneNumberWithTwiMLApp.png)
+![screenshot of phone number configuration](./screenshots/Configure1stPhoneNumberWithTwiMLApp.png)
+
+You will then need to configure your 2nd Twilio Voice Phone Number to use the TwiML Bin we created earlier. This tells Twilio how to handle an incoming call directed to your 2nd Twilio Voice Number (grabbing the next caller from the queue).
+
+1.  Log in to your [Twilio Console](https://www.twilio.com/console)
+2.  Navigate to your [Active Numbers list](https://www.twilio.com/console/phone-numbers/incoming)
+3.  Click on the 2nd Twilio number you purchased earlier
+4.  Scroll down to find the 'Voice & Fax' section and look for 'CONFIGURE WITH'
+5.  Select 'Webhook, TwiML Bin, Function, Studio Flow, Proxy Service'
+6.  Under 'A call comes in', choose the TwiML Bin you created earlier.
+7.  Click the 'Save' button at the bottom of the browser window.
+
+![screenshot of phone number configuration](./screenshots/Configure2ndPhoneNumberWithTwiMLBin.png)
 
 You can now call your Twilio Voice Phone Number from your cell or landline phone.
 
