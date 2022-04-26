@@ -1,13 +1,25 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Twilio Voice JavaScript SDK Quickstart</title>
+    <title>Twilio Voice JavaScript SDK</title>
     <link rel="stylesheet" href="site.css" />
   </head>
   <body>
     <header>
-      <h1>Twilio Voice JavaScript SDK Quickstart</h1>
+      <h1>Bob's Scuba Shop Example - Twilio Voice JavaScript SDK</h1>
       <button id="startup-button">Start up the Device</button>
+      <section class="center-section">
+        <h2>Call Flow:</h2>
+        <ol>
+          <li>End user calls Bob's Scuba Shop (1st Twilio Number)</li>
+          <li>Twilio number webhooks to Bob's server (/voice endpoint) and gets instructions to enqueue the call</li>
+          <li>Status callback hits (/delivery-callback endpoint) to update frontend</li>
+          <li>Bob clicks "Call next in queue" to dial 2nd Twilio number</li>
+          <li>Twilio number webhooks to Bob's server (/voice endpoint) and gets instructions to queue next call</li>
+          <li>Queue verb includes instructions prior to bridging connections at (/about-to-connect)</li>
+          <li>Status callback hits (/delivery-callback endpoint) to update frontend</li>
+        </ol>
+      </section>
     </header>
     <main id="controls">
       <section class="left-column" id="info">
@@ -26,11 +38,10 @@
         <h2 class="instructions">Make a Call</h2>
         <div id="call-controls" class="hide">
           <form>
-            <label for="phone-number"
-              >Enter a phone number or client name</label
-            >
+            <label for="phone-number">Enter a phone number or client name</label>
             <input id="phone-number" type="text" placeholder="+15552221234" />
             <button id="button-call" type="submit">Call</button>
+            <button id="button-call-queue" type="submit">Call next in queue</button>
           </form>
           <button id="button-hangup-outgoing" class="hide">Hang Up</button>
           <div id="incoming-call" class="hide">
@@ -51,9 +62,22 @@
           </div>
         </div>
       </section>
-      <section class="right-column">
+      <section>
         <h2>Event Log</h2>
         <div class="hide" id="log"></div>
+        <br>
+        <h2>Queue Log</h2>
+        <div class="hide" id="queue">
+          <table id="queueTable">
+            <thead>
+              <th>#</th>
+              <th>Number</th>
+              <th>Time Elapsed</th>
+            </thead>
+            <tbody id="queueTableBody">
+            </tbody>
+          </table>
+        </div>
       </section>
     </main>
 

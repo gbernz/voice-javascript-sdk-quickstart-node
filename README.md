@@ -2,22 +2,11 @@
   <img src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg" alt="Twilio" width="250" />
 </a>
 
-# twilio-serverless-voice-javascript-sdk-quickstart-node-queue
-
-
-![](https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-node/workflows/Node.js/badge.svg)
+# Twilio Voice JavaScript SDK Quickstart for Node.js + Queue
 
 ## About
 
-This application should give you a ready-made starting point for writing your own voice apps with Twilio Voice JavaScript SDK 2.0 (Formerly known as Twilio Client). Quickly setup a Twilio Client and manage inbound/outbound calls from your browser. This follows https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-node with the added bonus of a queue.
-
-This application is built in Node.
-
-Implementations in other languages:
-
-| .NET        | Java        | Python                                                                        | PHP         | Ruby        |
-| :---------- | :---------- | :---------------------------------------------------------------------------- | :---------- | :---------- |
-| [Done](https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-csharp) | [Done](https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-java)| [Done](https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-python) | [Done](https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-php) | [Done](https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-ruby) |
+This application should give you a ready-made starting point for writing your own voice apps with Twilio Voice JavaScript SDK 2.0 (Formerly known as Twilio Client). Quickly setup a Twilio Client and manage inbound/outbound calls from your browser. This follows https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-node with the added bonus of managing a queue.
 
 ## Set Up
 
@@ -33,7 +22,7 @@ Implementations in other languages:
 
    - For detailed instructions with screenshots, see the [Create a TwiML App.md file](ConsoleHowTos/CreateNewTwiMLApp/CreateNewTwiMLApp.md)
  
-2. [Purchase a Voice phone number](https://www.twilio.com/console/phone-numbers/incoming). You will need this phone number in [E.164 format](https://en.wikipedia.org/wiki/E.164) for your `.env` file.
+2. [Purchase (2) Voice phone numbers](https://www.twilio.com/console/phone-numbers/incoming). You will need this phone number in [E.164 format](https://en.wikipedia.org/wiki/E.164) for your `.env` file. The first number is the main touchpoint for your business, this is used to establish the queue for inbound calls. The second number is what is used by your business to dequeue callers out of the queue.
    
    - For detailed instructions with screenshots, see the [Buy a Phone Number.md file](ConsoleHowTos/BuyVoicePhoneNumber/BuyVoicePhoneNumber.md)
    
@@ -45,20 +34,21 @@ Implementations in other languages:
 
 Before we begin local development, we need to collect all the config values we need to run the application.
 
-| Config Value                           | Description                                                                                                                                                              |
-| :------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `TWILIO_ACCOUNT_SID`                   | Your primary Twilio account identifier - find this [in the console here](https://www.twilio.com/console).                                                                |
-| `TWILIO_TWIML_APP_SID`                 | The SID of the TwiML App you created in step 1 above. Find the SID [in the console here](https://www.twilio.com/console/voice/twiml/apps).                               |
-| `TWILIO_CALLER_ID`                     | Your Twilio phone number in [E.164 format](https://en.wikipedia.org/wiki/E.164) - you can [find your number here](https://www.twilio.com/console/phone-numbers/incoming) |
-| `TWILIO_API_KEY` / `TWILIO_API_SECRET` | The `TWILIO_API_KEY` is the API Key SID you created in step 3 above, and the `TWILIO_API_SECRET` is the secret associated with that key.                                 |
+| Config Value                           | Description                                                                                                                                                                  |
+| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWILIO_ACCOUNT_SID`                   | Your primary Twilio account identifier - find this [in the console here](https://www.twilio.com/console).                                                                    |
+| `TWILIO_TWIML_APP_SID`                 | The SID of the TwiML App you created in step 1 above. Find the SID [in the console here](https://www.twilio.com/console/voice/twiml/apps).                                   |
+| `TWILIO_CALLER_ID`                     | Your 1st Twilio phone number in [E.164 format](https://en.wikipedia.org/wiki/E.164) - you can [find your number here](https://www.twilio.com/console/phone-numbers/incoming) |
+| `TWILIO_QUEUE_CALLER_ID`               | Your 2nd Twilio phone number in [E.164 format](https://en.wikipedia.org/wiki/E.164) - you can [find your number here](https://www.twilio.com/console/phone-numbers/incoming) |
+| `TWILIO_API_KEY` / `TWILIO_API_SECRET` | The `TWILIO_API_KEY` is the API Key SID you created in step 3 above, and the `TWILIO_API_SECRET` is the secret associated with that key.                                     |
 
 ### Local development
 
 1. First clone this repository and cd into it:
 
    ```bash
-   git clone https://github.com/TwilioDevEd/voice-javascript-sdk-quickstart-node.git
-   cd voice-javascript-sdk-quickstart-node
+   git clone https://github.com/gbernz/voice-javascript-sdk-quickstart-node-queue.git
+   cd voice-javascript-sdk-quickstart-node-queue
    ```
 
 2. Create a configuration file for your application by copying the `.env.example` and edit the `.env` file with the configuration values from above.
@@ -148,6 +138,12 @@ You can now call your Twilio Voice Phone Number from your cell or landline phone
 
 **Note:** Since this is a quickstart with limited functionality, incoming calls will only be routed to your most recently-created `Twilio.Device`.
 
+### Managing the Queue
+
+   - When a user calls the 1st Twilio number (main business number), that user will be enqueued to the queue.
+   - When the agent/rep is ready, click the "Call next in queue" button to grab the next caller in the queue.
+   - More properties are available for members within the queue for further customization (i.e. position, waitTime, queueSid, etc.). Check out the [Member Resource](https://www.twilio.com/docs/voice/api/member-resource).
+
 ### Unknown Audio Devices
 
 If you see "Unknown Audio Output Device 1" in the "Ringtone" or "Speaker" devices lists, click the button below the boxes (Seeing "Unknown" Devices?) to have your browser identify your input and output devices.
@@ -170,14 +166,6 @@ Please be aware that some of these services may charge you for the usage and/or 
 | Service                           |                                                                                     |
 | :-------------------------------- | :---------------------------------------------------------------------------------- |
 | [Heroku](https://www.heroku.com/) | [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy) |
-
-## Resources
-
-- The CodeExchange repository can be found [here](https://github.com/twilio-labs/code-exchange/).
-
-## Contributing
-
-This template is open source and welcomes contributions. All contributions are subject to our [Code of Conduct](https://github.com/twilio-labs/.github/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 

@@ -5,11 +5,15 @@
   const inputVolumeBar = document.getElementById("input-volume");
   const volumeIndicators = document.getElementById("volume-indicators");
   const callButton = document.getElementById("button-call");
+  const callQueueButton = document.getElementById("button-call-queue");
   const outgoingCallHangupButton = document.getElementById("button-hangup-outgoing");
   const callControlsDiv = document.getElementById("call-controls");
   const audioSelectionDiv = document.getElementById("output-selection");
   const getAudioDevicesButton = document.getElementById("get-devices");
   const logDiv = document.getElementById("log");
+  const queueDiv = document.getElementById("queue");
+  const queueTable = document.getElementById("queueTable");
+  const queueTableBody = document.getElementById("queueTableBody");
   const incomingCallDiv = document.getElementById("incoming-call");
   const incomingCallHangupButton = document.getElementById(
     "button-hangup-incoming"
@@ -33,9 +37,50 @@
     e.preventDefault();
     makeOutgoingCall();
   };
+  callQueueButton.onclick = (e) => {
+    e.preventDefault();
+    takeNextQueueCall();
+  }
   getAudioDevicesButton.onclick = getAudioDevices;
   speakerDevices.addEventListener("change", updateOutputDevice);
   ringtoneDevices.addEventListener("change", updateRingtoneDevice);
+
+  
+
+  function updateQueue() {
+
+    $.getJSON("./queue.json", function(data) {
+      // clear table
+      queueTableBody.innerHTML = "";
+
+      // for each item in JSON, add a new row, insert 4 new cells, and text to cells
+      $.each(data.queueData, function(i, data) {
+        // setting up new rows
+        var row = queueTableBody.insertRow();
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        cell1.innerHTML = i+1;
+        cell2.innerHTML = data.number;
+
+        // time manipulation (count up)
+        function updateTime(){
+          const old = new Date(data.dateTime);
+          const current = new Date();
+          const date = new Date(0);
+          var timeDiff_ms = Math.abs(current-old);
+          date.setSeconds(timeDiff_ms/1000);
+          var timeString = date.toISOString().substr(11, 8);
+          cell3.innerHTML = timeString;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+      })
+    })
+    return false;
+  }
+  updateQueue();
+  setInterval(updateQueue, 1000);
   
 
   // SETUP STEP 1:
@@ -63,12 +108,15 @@
   // Instantiate a new Twilio.Device
   function intitializeDevice() {
     logDiv.classList.remove("hide");
+    queueDiv.classList.remove("hide");
     log("Initializing device");
     device = new Twilio.Device(token, {
       logLevel:1,
       // Set Opus as our preferred codec. Opus generally performs better, requiring less bandwidth and
       // providing better audio quality in restrained network conditions.
       codecPreferences: ["opus", "pcmu"],
+      // Allow incoming call while line is busy
+      allowIncomingWhileBusy: true,
     });
 
     addDeviceListeners(device);
@@ -105,6 +153,38 @@
     var params = {
       // get the phone number to call from the DOM
       To: phoneNumberInput.value,
+      //statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
+    };
+
+    if (device) {
+      log(`Attempting to call ${params.To} ...`);
+
+      // Twilio.Device.connect() returns a Call object
+      const call = await device.connect({ params });
+
+      // add listeners to the Call
+      // "accepted" means the call has finished connecting and the state is now "open"
+      call.on("accept", updateUIAcceptedOutgoingCall);
+      call.on("disconnect", updateUIDisconnectedOutgoingCall);
+      call.on("cancel", updateUIDisconnectedOutgoingCall);
+
+      outgoingCallHangupButton.onclick = () => {
+        log("Hanging up ...");
+        call.disconnect();
+      };
+
+    } else {
+      log("Unable to make call.");
+    }
+  }
+
+  // GRAB NEXT CALL IN QUEUE
+
+  async function takeNextQueueCall() {
+    var params = {
+      // get the phone number to call from the DOM
+      To: "+17207347624",
+      //statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
     };
 
     if (device) {
@@ -132,6 +212,7 @@
   function updateUIAcceptedOutgoingCall(call) {
     log("Call in progress ...");
     callButton.disabled = true;
+    callQueueButton.disabled = true;
     outgoingCallHangupButton.classList.remove("hide");
     volumeIndicators.classList.remove("hide");
     bindVolumeIndicators(call);
@@ -140,6 +221,7 @@
   function updateUIDisconnectedOutgoingCall() {
     log("Call disconnected.");
     callButton.disabled = false;
+    callQueueButton.disabled = false;
     outgoingCallHangupButton.classList.add("hide");
     volumeIndicators.classList.add("hide");
   }
