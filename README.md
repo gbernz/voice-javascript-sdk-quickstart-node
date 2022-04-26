@@ -92,8 +92,8 @@ Before we begin local development, we need to collect all the config values we n
    - In the Twilio Console, navigate to [Programmable Voice > TwiML > TwiML Apps](https://www.twilio.com/console/voice/twiml/apps)
    - Select the TwiML App you created earlier
    - On your TwiML App's information page, find the 'Voice Configuration' section.
-   - Change the Request URL to your ngrok url with `/voice` appended to the end. (E.g: `https://asdf456.ngrok.io/voice`) **Note:** You **must** use the https URL, otherwise some browsers will block
-     microphone access.
+   - Change the Request URL to your ngrok url with `/voice` appended to the end. (E.g: `https://asdf456.ngrok.io/voice`) **Note:** You **must** use the https URL, otherwise some browsers will block microphone access.
+   - Change the Status Callback URL to your ngrok url with `/delivery-callback` appended to the end. (E.g: `https://asdf456.ngrok.io/delivery-callback`) **Note:** You **must** use the https URL, otherwise some browsers will block microphone access.
    - Click the 'Save' button.
 
    ![screenshot of TwiML App Voice Configuration](./screenshots/UpdateRequestURL.png)
